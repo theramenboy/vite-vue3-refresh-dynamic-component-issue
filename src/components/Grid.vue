@@ -125,9 +125,3 @@ div(:style="getGridCol" style="overflow: auto;")
 				v-if="col.children && col.children.body"
 			)
 </template>
-
-<style scoped>
-.row-selected {
-  background-color: lightgray;
-}
-</style>
