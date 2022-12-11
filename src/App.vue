@@ -54,7 +54,7 @@ class ArrayType {
 <template lang="pug">
 div(v-if="array != null && array.length > 0")
   div: strong CUSTOM COMPONENT WITH SLOTS 
-  div: em The issue here is that if I click on the input, first the focus is correct, but than the CSS of the parent div in "Grid.vue" is apply and the dynamic component refresh losing the focus 
+  div: em The issue here is that if I click on the input, first the focus is correct, but than the CSS of the parent div in "Grid.vue" is apply and the dynamic component REFRESH losing the focus
   div: em What can I do to resolve this to be like the example below ? 
   br
   Grid(:rows="array" :selectable="true" :toggle-selected-row="false")
@@ -73,8 +73,9 @@ div(v-if="array != null && array.length > 0")
   br
   div: strong WHAT I WANT
   div: em I'd like that if I click on the input, the div click set the object to selected, the row is marked with the "row-selected" class and the input stay focused
+  div: em This is made with a simple DIV and a custom Input component. I'd like this behavior within my Grid component and the usage of the slots with Column component. 
   br
-  div(v-for="arr in array2" :class="{ 'row-selected': arr.isSelected}" style="display: flex; gap: 4px; padding: 5px; cursor: pointer" @click="selectRow(arr)")
+  div(v-for="arr in array2" :class="{ 'row-selected': arr.isSelected}" style="display: flex; gap: 4px; padding: 5px; cursor: pointer; border-bottom: 1px solid" @click="selectRow(arr)")
     div: Input(:id="arr.id" v-model="arr.a")
     div: Input(v-model="arr.b")
     div: Input(v-model="arr.c")

@@ -3,12 +3,12 @@ import type { PropType } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 import { computed, useSlots, ref } from 'vue';
 
-export interface ThDataGridRow {
+export interface GridRow {
   isSelected: boolean;
   id: string;
 }
 
-export interface IThDataGridColumn {
+export interface GridColumn {
   props?: {
     header: string | null;
     selectable: boolean | null;
@@ -19,7 +19,7 @@ export interface IThDataGridColumn {
 
 const props = defineProps({
   rows: {
-    type: Array as PropType<Array<ThDataGridRow & any>>,
+    type: Array as PropType<Array<GridRow & any>>,
     required: true,
   },
   selectable: {
@@ -46,14 +46,14 @@ const slots = useSlots();
 const columns = computed(() => {
   const cols = slots.default ? slots.default() : [];
 
-  const results = new Array<IThDataGridColumn>();
+  const results = new Array<GridColumn>();
 
   cols.forEach((a) => {
-    if (a.props?.header != null) results.push(a as any as IThDataGridColumn);
+    if (a.props?.header != null) results.push(a as any as GridColumn);
 
     if (a.children && a.children.length) {
       (a.children as any).forEach((c: any) => {
-        results.push(c as any as IThDataGridColumn);
+        results.push(c as any as GridColumn);
       });
     }
   });
@@ -61,20 +61,36 @@ const columns = computed(() => {
   return results;
 });
 
-const getGridCol = computed(() => {
-  return `display: grid; grid-template-columns: repeat(${columns.value.length}, auto); gap: 2`;
+const geyColStyle = computed(() => {
+  return {
+    display: "grid",
+    "grid-template-columns": `repeat(${columns.value.length}, auto)`,
+    gap: 2,
+    overflow: "auto"
+  }
 });
 
-function getHeaderStyle(column: IThDataGridColumn) {
-  return `display: flex; align-items: center; border-bottom: 2px;background-color: white; z-index: 1;`;
-}
+const getHeaderStyle = computed(() => {
+  return {
+    display: "flex",
+    "align-items": "center",
+    "border-bottom": "2px solid",
+    "background-color": "white",
+    "z-index": 1
+  }
+})
 
 const getBodyStyle = computed(() => {
-  const selectableStyle = props.selectable ? 'cursor: pointer; ' : '';
-  return `display: flex; align-items: center; border-bottom: 1px;${selectableStyle}min-height: 45px;`;
+  return {
+    display: "flex",
+    "align-items": "center",
+    "border-bottom": "1px solid",
+    "min-height": "45px",
+    cursor: props.selectable ? "pointer" : ""
+  }
 });
 
-function onRowSelected(row: ThDataGridRow, col: IThDataGridColumn) {
+function onRowSelected(row: GridRow, col: GridColumn) {
   if (!props.selectable) return;
   if (!(col.props?.selectable ?? true)) return;
 
@@ -94,7 +110,7 @@ function onRowSelected(row: ThDataGridRow, col: IThDataGridColumn) {
   }
 }
 
-function getDivKey(row: ThDataGridRow, col: IThDataGridColumn) {
+function getDivKey(row: GridRow, col: GridColumn) {
   let id1 = uuidv4();
   let id2 = uuidv4();
   return `${row?.id ?? id1}-${col.props?.id ?? id2}`;
@@ -102,8 +118,8 @@ function getDivKey(row: ThDataGridRow, col: IThDataGridColumn) {
 </script>
 
 <template lang="pug">
-div(:style="getGridCol" style="overflow: auto;")
-	div(v-for="(col, i) in columns" :style="getHeaderStyle(col)" :key="i")
+div(:style="geyColStyle")
+	div(v-for="(col, i) in columns" :style="getHeaderStyle" :key="i")
 		div
 			div(v-if="col.children?.header != null")
 				component(:is="col.children.header")
@@ -112,7 +128,7 @@ div(:style="getGridCol" style="overflow: auto;")
 	template(v-for="(row, r) in rows")
 		div(
 			v-for="(col, c) in columns" 
-			:style="getBodyStyle" 
+			:style="getBodyStyle"
 			@click="onRowSelected(row, col)" 
 			:class="{'row-selected': row.isSelected && selectable }" 
 			:key="r + '_' + c"

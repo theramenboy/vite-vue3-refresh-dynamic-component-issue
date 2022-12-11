@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import type { ThDataGridRow } from './th-data-grid-model';
 import { v4 as uuidv4 } from 'uuid';
 
 defineProps({
@@ -20,7 +19,7 @@ defineProps({
     default: true,
   },
   data: {
-    type: Object as PropType<ThDataGridRow & any>,
+    type: Object as PropType<any>,
     required: false,
   },
 });
